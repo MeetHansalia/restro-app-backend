@@ -63,15 +63,27 @@ const loginController = async (req, res) => {
       case !password:
         return res.status(40).json({ message: "password is required" });
     }
-    const user = await User.findOne({ email: email, password: password });
+    const user = await User.findOne({ email }, { password: 0 });
     if (!user) {
       return res
         .status(404)
         .send({ success: false, message: "User not found" });
     }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Invalid credentials" });
+    }
+    user.password = undefined;
     return res
       .status(200)
-      .send({ success: true, message: "Login successful", user });
+      .send({
+        success: true,
+        message: "Login successful",
+        user,
+        token: generateToken(user._id),
+      });
   } catch (error) {
     console.log("error in loginController", error);
     res.status(500).json({ message: "error in login", error });
