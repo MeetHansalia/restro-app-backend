@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const testRoute = require("./routes/testroute.js");
+const userRoutes = require("./routes/userRoutes.js");
 
 const cors = require("cors");
 const morgan = require("morgan");
@@ -22,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 app.use("/api/v1/test", testRoute);
 app.use("/api/v1/auth", authRoutes);
-
+app.use("/api/v1/user", userRoutes);
 app.get("/", (req, res) => {
   res.send("Hello World sfgjh dahddf dh ");
 });

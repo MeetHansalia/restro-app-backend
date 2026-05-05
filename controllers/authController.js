@@ -1,5 +1,11 @@
 const User = require("../models/user.Model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+};
+
 const registerController = async (req, res) => {
   try {
     const {
@@ -63,7 +69,7 @@ const loginController = async (req, res) => {
       case !password:
         return res.status(40).json({ message: "password is required" });
     }
-    const user = await User.findOne({ email }, { password: 0 });
+    const user = await User.findOne({ email });
     if (!user) {
       return res
         .status(404)
@@ -75,15 +81,14 @@ const loginController = async (req, res) => {
         .status(404)
         .send({ success: false, message: "Invalid credentials" });
     }
+
     user.password = undefined;
-    return res
-      .status(200)
-      .send({
-        success: true,
-        message: "Login successful",
-        user,
-        token: generateToken(user._id),
-      });
+    return res.status(200).send({
+      success: true,
+      message: "Login successful",
+      user,
+      token: generateToken(user._id),
+    });
   } catch (error) {
     console.log("error in loginController", error);
     res.status(500).json({ message: "error in login", error });
