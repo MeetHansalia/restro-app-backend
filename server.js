@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db.js");
 const authRoutes = require("./routes/authRoutes.js");
+const restraurantRoutes = require("./routes/restraurantRoutes.js");
 // dot env config
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/test", testRoute);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/restraurant", restraurantRoutes);
 app.get("/", (req, res) => {
   res.send("Hello World sfgjh dahddf dh ");
 });

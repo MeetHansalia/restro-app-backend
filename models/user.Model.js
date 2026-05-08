@@ -31,10 +31,14 @@ const userSchema = new mongoose.Schema(
       default: "client",
       required: [true, "userType is required"],
     },
-    // profileImage: {
-    //   type: String,
-    //   default: "https://via.placeholder.com/150",
-    // },
+    profileImage: {
+      type: String,
+      default: "https://via.placeholder.com/150",
+    },
+    answer:{
+      type: String,
+      required: [true, "answer is required"],
+    }
   },
   { timestamps: true },
 );

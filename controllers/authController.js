@@ -16,6 +16,7 @@ const registerController = async (req, res) => {
       phone,
       userType,
       profileImage,
+      answer,
     } = req.body;
     switch (true) {
       case !userName:
@@ -30,6 +31,8 @@ const registerController = async (req, res) => {
         return res.status(400).json({ message: "phone is required" });
       case !userType:
         return res.status(400).json({ message: "userType is required" });
+      case !answer:
+        return res.status(400).json({ message: "answer is required" });
     }
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -47,6 +50,7 @@ const registerController = async (req, res) => {
       phone,
       userType,
       profileImage,
+      answer,
     });
     res.status(200).send({
       success: true,
