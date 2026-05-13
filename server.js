@@ -9,6 +9,8 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db.js");
 const authRoutes = require("./routes/authRoutes.js");
 const restraurantRoutes = require("./routes/restraurantRoutes.js");
+const categoryRoutes = require("./routes/categoryRoutes.js");
+const foodRoutes = require("./routes/foodRoutes.js");
 // dot env config
 dotenv.config();
 
@@ -26,6 +28,9 @@ app.use("/api/v1/test", testRoute);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/restraurant", restraurantRoutes);
+app.use("/api/v1/category", categoryRoutes);
+app.use("/api/v1/food", foodRoutes);
+
 app.get("/", (req, res) => {
   res.send("Hello World sfgjh dahddf dh ");
 });
