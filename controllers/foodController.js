@@ -139,8 +139,8 @@ const getFoodByResturantIdController = async (req, res) => {
       .populate("foodCategory");
     if (!foods.length) {
       return res
-        .status(404)
-        .send({ success: false, message: "No foods found for this restaurant" });
+        .status(200)
+        .send({ success: true, message: "No foods found for this restaurant" });
     }
     res.status(200).send({ success: true, totalFoods: foods.length, foods });
   } catch (error) {
@@ -166,10 +166,77 @@ const getFoodByCategoryController = async (req, res) => {
   }
 };
 
+const updateFoodController = async (req, res) => {
+  try {
+    const food = await Food.findByIdAndUpdate(req.params.id, {
+      new: true,
+    });
+    if (!food) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Food not found" });
+    }
+    const {
+      title,
+      description,
+      foodTags,
+      foodType,
+      foodPrice,
+      foodCategory,
+      foodCode,
+      isAvailable,
+      resturantId,
+      rattings,
+      rattingCount,
+    } = req.body;
+    const updatedFood = await Food.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        description,
+        foodTags,
+        foodType,
+        foodPrice,
+        foodCategory,
+        foodCode,
+        isAvailable,
+        resturantId,
+        rattings,
+        rattingCount,
+      },
+      { new: true },
+    );
+    if (!updatedFood) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Food not found" });
+    }
+    res
+      .status(200)
+      .send({ success: true, message: "Food updated successfully", food });
+  } catch (error) {
+    console.log("error in updateFoodController", error);
+    res.status(500).send({ success: false, message: ` ${error.message}` });
+  }
+};
+
+const deleteFoodController = async (req, res) => {
+  try {
+    const food = await Food.findByIdAndDelete(req.params.id);
+    res
+      .status(200)
+      .send({ success: true, message: "Food deleted successfully" });
+  } catch (error) {
+    console.log("error in deleteFoodController", error);
+    res.status(500).send({ success: false, message: ` ${error.message}` });
+  }
+};
 module.exports = {
   createFoodController,
   getAllFoodsController,
   getFoodByIdController,
   getFoodByResturantIdController,
   getFoodByCategoryController,
+  updateFoodController,
+  deleteFoodController,
 };
