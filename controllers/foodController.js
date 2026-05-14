@@ -1,6 +1,7 @@
 const Food = require("../models/foodModel");
 const Resturant = require("../models/resturantModel");
 const Category = require("../models/categoryModel");
+const Order = require("../models/orderModel");
 
 const createFoodController = async (req, res) => {
   try {
@@ -231,6 +232,52 @@ const deleteFoodController = async (req, res) => {
     res.status(500).send({ success: false, message: ` ${error.message}` });
   }
 };
+
+// order
+
+const placeOrderController = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { cart } = req.body;
+    if (!cart || !cart.length) {
+      return res
+        .status(400)
+        .send({ success: false, message: "cart is required" });
+    }
+
+    const foodIds = cart.map((item) => item._id);
+    const foodItems = await Food.find({ _id: { $in: foodIds } });
+
+    if (foodItems.length !== foodIds.length) {
+      return res
+        .status(404)
+        .send({ success: false, message: "One or more food items not found" });
+    }
+
+    let totalPrice = 0;
+    const foods = cart.map((item) => {
+      const quantity = item.quantity || 1;
+      const foodData = foodItems.find(
+        (f) => f._id.toString() === item._id,
+      );
+      totalPrice += foodData.foodPrice * quantity;
+      return { food: item._id, quantity };
+    });
+
+    const newOrder = new Order({
+      foods,
+      payment: totalPrice,
+      buyer: userId,
+    });
+    await newOrder.save();
+    res
+      .status(201)
+      .send({ success: true, message: "Order placed successfully", newOrder });
+  } catch (error) {
+    console.log("error in placeOrderController", error);
+    res.status(500).send({ success: false, message: ` ${error.message}` });
+  }
+};
 module.exports = {
   createFoodController,
   getAllFoodsController,
@@ -239,4 +286,5 @@ module.exports = {
   getFoodByCategoryController,
   updateFoodController,
   deleteFoodController,
+  placeOrderController,
 };
